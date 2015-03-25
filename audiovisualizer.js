@@ -10,7 +10,7 @@ var barWidth;
 function loadSound() {
   var request = new XMLHttpRequest();
 
-  request.open('GET', 'Raksat_Atlas.mp3', true);
+  request.open('GET', 'music.mp3', true);
   request.responseType = 'arraybuffer';
 
   request.onload = function () {
@@ -40,18 +40,19 @@ function drawData() {
 
   barWidth = (div_visual.offsetWidth / dataLength);// * 2.5;
   barWidth -= (barWidth/10);
-  console.log(div_visual.offsetWidth)
+//  console.log(div_visual.offsetWidth)
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < dataLength; i++) {
     var bar = document.createElement('div');
     bar.className = 'bar';
     bar.style.width = barWidth + 'px';
+    bar.style.left = (barWidth * i) + 'px';
     bar.style.height = arrayData[i] + 'px';
     fragment.appendChild(bar);
   }
   div_visual.innerHTML = '';
   div_visual.appendChild(fragment);
-//  requestAnimationFrame(drawData);
+  requestAnimationFrame(drawData);
 }
 
 function pause() {
