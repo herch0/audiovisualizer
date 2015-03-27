@@ -6,6 +6,7 @@ var source;
 var analyser;
 var div_visual;
 var barWidth;
+var bars = [];
 
 function loadSound() {
   var request = new XMLHttpRequest();
@@ -18,10 +19,25 @@ function loadSound() {
       audioBuffer = decodedData;
       analyser = context.createAnalyser();
       analyser.fftSize = 256;
+      createBars(analyser.frequencyBinCount);
       playSound(audioBuffer);
     });
   };
   request.send();
+}
+
+function createBars(nb) {
+  var fragment = document.createDocumentFragment();
+  barWidth = (div_visual.offsetWidth / nb);
+  for (var i = 0; i < nb; i++) {
+    var bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.left = (barWidth * i) + 'px';
+    bar.style.width = barWidth + 'px';
+    bars.push(bar);
+    fragment.appendChild(bar);
+  }
+  div_visual.appendChild(fragment);
 }
 
 function playSound(buffer) {
@@ -38,20 +54,9 @@ function drawData() {
   var arrayData = new Uint8Array(dataLength);
   analyser.getByteTimeDomainData(arrayData);
 
-  barWidth = (div_visual.offsetWidth / dataLength);// * 2.5;
-  barWidth -= (barWidth/10);
-//  console.log(div_visual.offsetWidth)
-  var fragment = document.createDocumentFragment();
   for (var i = 0; i < dataLength; i++) {
-    var bar = document.createElement('div');
-    bar.className = 'bar';
-    bar.style.width = barWidth + 'px';
-    bar.style.left = (barWidth * i) + 'px';
-    bar.style.height = arrayData[i] + 'px';
-    fragment.appendChild(bar);
+    bars[i].style.height = arrayData[i] + 'px';
   }
-  div_visual.innerHTML = '';
-  div_visual.appendChild(fragment);
   requestAnimationFrame(drawData);
 }
 
